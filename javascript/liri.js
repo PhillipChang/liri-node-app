@@ -10,7 +10,7 @@ var inquiry = process.argv[3];
 
 switch(action){
     case 'concert-this':
-    // bandSearch();
+    bandSearch();
     break;
 
     case 'spotify-this-song':
@@ -24,24 +24,36 @@ switch(action){
     break;
 }
 
-// function bandSearch(){
+function bandSearch(){
     // for (i = 3; i<process.argv.length;i++){
     //     inquiry += process.argv[i];
     //     }
-//     axios.get("https://rest.bandsintown.com/artists/" + inquiry + "/events?app_id=codingbootcamp").then(    
-//     function(result){
-//         console.log("the band name is:",artist);
-//         console.log("Name of the Venue:"+ result);
-//         // console.log("Venue Location:", response.venue.city);
-//         // console.log("Date of the Event:", response.datetime);        
-//     }
-//     )};
+    axios.get("https://rest.bandsintown.com/artists/" + inquiry + "/events?app_id=codingbootcamp").then(    
+    function(response){
+        // console.log("data:", response.data);
+        console.log("Location Name:", response.data[0].venue.name);
+        console.log("Venue Location:", response.data[0].venue.city, response.data[0].venue.country);
+        console.log("Date of the Event:", moment(response.data[0].datetime).format("MM/DD/YYYY"));        
+    })
+    .catch(function(error){
+        if (error.result){
+            console.log("Error is", error.response.data);
+            console.log("Error is", error.response.status);
+            console.log("Error is", error.response.headers);
+        }
+        else if (error.request) {
+            console.log(error.request);
+        }
+        else {
+            console.log("error", error.message);
+        }
+        console.log(error.config);
+    })
+};
 
 function spotifySong(){
-var spotify = new Spotify({
-    id:"5ee05a6f5ff0415eaf9e9a71b5c918ef",
-    secret:"269e186460ce4f2e8edbec2a2dfb92be",
-});
+var keys = require("./keys.js");
+var spotify = new spotify(keys.spotify);
 // for (i = 3; i<process.argv.length;i++){
 //     inquiry += process.argv[i];
 //     }
