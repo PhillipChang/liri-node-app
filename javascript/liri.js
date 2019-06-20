@@ -18,17 +18,17 @@ switch(action){
     break;
 
     case 'movie-this':
+        omdbSearch();
     break;
 
     case 'do-what-it-says':
+        doStuff();
     break;
 }
 
 function bandSearch(){
-    // for (i = 3; i<process.argv.length;i++){
-    //     inquiry += process.argv[i];
-    //     }
-    axios.get("https://rest.bandsintown.com/artists/" + inquiry + "/events?app_id=codingbootcamp").then(    
+    var artist = process.argv.splice(3).join();
+    axios.get("https://rest.bandsintown.com/artists/" + artist + "/events?app_id=codingbootcamp").then(    
     function(response){
         // console.log("data:", response.data);
         console.log("Location Name:", response.data[0].venue.name);
@@ -53,14 +53,16 @@ function bandSearch(){
 
 function spotifySong(){
 var keys = require("./keys.js");
-var spotify = new spotify(keys.spotify);
-// for (i = 3; i<process.argv.length;i++){
-//     inquiry += process.argv[i];
-//     }
+var spotify = new Spotify(keys.spotify);
+var song = '';
 if (inquiry === undefined){
     inquiry = "Ace of Base The Sign";
+    song = inquiry;
 }
-spotify.search({type: 'track', query: inquiry}, function(err,data){
+else {
+    song = process.argv.splice(3).join(" ");
+}
+spotify.search({type: 'track', query: song}, function(err,data){
     if (err) {
         return console.log("Error Occurred", err);
     }
@@ -69,4 +71,24 @@ console.log("Song Name:", data.tracks.items[0].name);
 console.log("Preview:", data.tracks.items[3].preview_url);
 console.log("Album:", data.tracks.items[0].album.name);
 });
+}
+
+function omdbSearch(){
+    if (inquiry === undefined){
+        inquiry = "Mr.Nobody";
+    }
+    var title = process.argv.slice(3).join("+");
+    axios.get("http://www.omdbapi.com/?t="+title+"&y=&plot=short&apikey=trilogy").then(
+        function(response) {
+          var result = response.data;
+          console.log("Title:", result.Title);
+          console.log("Release Year:", result.Released);
+          console.log("Imdb Rating:", result.Ratings[0].Value);
+          console.log("Rotten Tomatoes Rating:", result.Ratings[2].Value);
+          console.log("Country:", result.Country);
+          console.log("Language:", result.Language);
+          console.log("Plot:", result.Plot);
+          console.log("Actors:", result.Actors);
+        }
+      );
 }
