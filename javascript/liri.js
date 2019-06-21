@@ -3,7 +3,10 @@ var moment = require("moment");
 var axios = require("axios");
 var Spotify = require("node-spotify-api");
 var fs = require("fs");
-// var inquirer = require("inquirer");
+var chalk = require("chalk");
+const header = chalk.bold.blue;
+const detail = chalk.bold.underline.green;
+const other = chalk.bold.red;
 
 var action = process.argv[2];
 var inquiry = process.argv[3];
@@ -42,9 +45,9 @@ function bandSearch(parameter){
     }
     axios.get("https://rest.bandsintown.com/artists/" + artist + "/events?app_id=codingbootcamp").then(    
     function(response){
-        console.log("Location Name:", response.data[0].venue.name);
-        console.log("Venue Location:", response.data[0].venue.city, response.data[0].venue.country);
-        console.log("Date of the Event:", moment(response.data[0].datetime).format("MM/DD/YYYY"));        
+        console.log(chalk.blue("Location Name:",chalk.green.underline.bold(response.data[0].venue.name)));
+        console.log(chalk.blue("Venue Location:", chalk.green.underline.bold(response.data[0].venue.city, response.data[0].venue.country)));
+        console.log(chalk.blue("Date of the Event:", chalk.red.underline(moment(response.data[0].datetime).format("MM/DD/YYYY"))));        
     })
     .catch(function(error){
         if (error.result){
@@ -81,10 +84,10 @@ spotify.search({type: 'track', query: song}, function(err,data){
     if (err) {
         return console.log("Error Occurred", err);
     }
-console.log("Artist:", data.tracks.items[0].artists[0].name);
-console.log("Song Name:", data.tracks.items[0].name);
-console.log("Preview:", data.tracks.items[3].preview_url);
-console.log("Album:", data.tracks.items[0].album.name);
+console.log(header("Artist:", detail(data.tracks.items[0].artists[0].name)));
+console.log(header("Song Name:", detail(data.tracks.items[0].name)));
+console.log(header("Preview:", other(data.tracks.items[3].preview_url)));
+console.log(header("Album:", detail(data.tracks.items[0].album.name)));
 });
 }
 
@@ -102,14 +105,14 @@ function omdbSearch(parameter){
     axios.get("http://www.omdbapi.com/?t="+title+"&y=&plot=short&apikey=trilogy").then(
         function(response) {
           var result = response.data;
-          console.log("Title:", result.Title);
-          console.log("Release Year:", result.Released);
-          console.log("Imdb Rating:", result.Ratings[0].Value);
-          console.log("Rotten Tomatoes Rating:", result.Ratings[2].Value);
-          console.log("Country:", result.Country);
-          console.log("Language:", result.Language);
-          console.log("Plot:", result.Plot);
-          console.log("Actors:", result.Actors);
+          console.log(header("Title:", detail(result.Title)));
+          console.log(header("Release Year:", detail(result.Released)));
+          console.log(header("Imdb Rating:", detail(result.Ratings[0].Value)));
+          console.log(header("Rotten Tomatoes Rating:", detail(result.Ratings[2].Value)));
+          console.log(header("Country:", detail(result.Country)));
+          console.log(header("Language:", detail(result.Language)));
+          console.log(header("Plot:", other(result.Plot)));
+          console.log(header("Actors:", other(result.Actors)));
         }
       );
 }
@@ -142,12 +145,3 @@ fs.readFile("random.txt","utf8", function(error,data){
     }
 });
 }
-// inquirer.prompt([
-//     {
-//     type:'list',
-//     name:'title',
-//     message:'What do you wish to do?',
-//     choices: {
-//         'spotify-this-song'
-//     }
-// ])
